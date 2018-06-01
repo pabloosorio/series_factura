@@ -13,7 +13,7 @@ class plantillas_wni_invoice(models.Model):
             sql = "select splot.name from stock_picking pi left join stock_move sp on sp.picking_id =pi.id  left join stock_move_line spl on spl.move_id=sp.id left join stock_production_lot splot on splot.id=spl.lot_id where  pi.origin='"+str(self.origin)+"' AND sp.product_id="+str(self.product_id.id)+" AND splot.name != 'None'"
         else:
             ori = str(self.name)
-            if(ori.find("Venta del ticket:")>=1):
+            if(ori.find("Venta del ticket:")>=0):
                 ori = ori.replace("Venta del ticket: ", "")
             else:
                 ori = str(self.invoice_id.origin)
