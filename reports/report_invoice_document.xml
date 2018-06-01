@@ -77,10 +77,19 @@
           <tr t-foreach="o.invoice_line_ids" t-as="l">
             <td><span t-field="l.product_id.l10n_mx_edi_code_sat_id.code"/></td>
             <td>
-              <span t-field="l.name"/>
+              <t t-if="l.name == l.product_id">
+                <span t-field="l.name"/>
+              </t>
+              <t t-if="l.name != l.product_id">
+                <span t-field="l.product_id"/>
+              </t>
+              <t t-if="l.product_id.barcode">
+                <br/>
+                <span>Código de barras: </span><span t-field="l.product_id.barcode"/>
+              </t>
               <t t-if="l.serie">
                 <br/>
-                <span>No Serie: </span><span t-field="l.serie" />
+                <span>No Serie: </span><span t-field="l.serie"/>
               </t>
             </td>
             <td class="hidden"><span t-field="l.origin"/></td>
