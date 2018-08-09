@@ -73,8 +73,65 @@
             <th class="text-right">Monto</th>
           </tr>
         </thead>
-        <tbody class="invoice_tbody">
-          <tr t-foreach="o.invoice_line_ids" t-as="l">
+         <tbody class="invoice_tbody">
+            <t t-set="lista" t-value="[]" />
+            <t t-set="listat" t-value="[]" />
+            <t t-foreach="o.invoice_line_ids" t-as="line">
+              <t t-if="not line.product_id.code in listat">
+                <t t-set="cant" t-value="0"/>
+                <t t-set="subt" t-value="0"/>
+                <t t-foreach="o.invoice_line_ids" t-as="l">
+                  <t t-if="line.product_id.code == l.product_id.code">
+                      <t t-set="cant" t-value="cant + l.quantity" />
+                      <t t-set="subt" t-value="subt + l.price_subtotal" />
+                  </t>
+                </t>
+                <t t-set="listat" t-value="listat + [(line.product_id.code)]"/>
+                <t t-set="lista" t-value="lista + [(line.product_id.l10n_mx_edi_code_sat_id.code,
+                line.product_id.code,
+                line.product_id.name,
+                line.product_id.barcode,
+                line.serie,
+                cant,
+                line.uom_id.name,
+                line.price_unit,
+                line.discount,
+                ', '.join(map(lambda x: (x.description or x.name),line.invoice_line_tax_ids)),
+                subt)]" />
+              </t>
+            </t>
+            <tr t-foreach="lista" t-as="l"> 
+            <td><t t-esc="l[0]"/></td>
+            <td>
+              <span>[<t t-esc="l[1]"/>] <t t-esc="l[2]"/>
+              </span>
+              <t t-if="l[3]!=''">
+                <br/>
+                <span>Código Barras: </span><t t-esc="l[3]"/>
+              </t>
+              <t t-if="l[4]!=''">
+                <br/>
+                <span>No Serie: </span><t t-esc="l[4]"/>
+              </t>
+            </td>
+            <td class="text-right">
+              <t t-esc="l[5]"/>
+              <t t-esc="l[6]"/>
+            </td>
+            <td class="text-right">
+              <t t-esc="l[7]"/>
+            </td>
+            <td t-if="display_discount" class="text-right">
+              <t t-esc="l[8]"/>
+            </td>
+            <td class="text-right">
+              <t t-esc="l[9]"/>
+            </td>
+            <td class="text-right"  id="subtotal">
+              <span t-esc="l[10]"/>
+            </td>
+          </tr>
+          <!--<tr t-foreach="o.invoice_line_ids" t-as="l">
             <td><span t-field="l.product_id.l10n_mx_edi_code_sat_id.code"/></td>
             <td>
               <t t-if="l.name == l.product_id">
@@ -109,7 +166,7 @@
             <td class="text-right" id="subtotal">
               <span t-field="l.price_subtotal" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
             </td>
-          </tr>
+          </tr>-->
           <tr t-foreach="range(max(5-len(o.invoice_line_ids),0))" t-as="l">
             <td/>
             <td>&amp;nbsp;</td>
